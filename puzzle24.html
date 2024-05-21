@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>24点</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        
+        #main {
+            text-align: center;
+            padding: 20px;
+            width: 90%;
+            max-width: 400px;
+            font-size: 40px;
+        }
+
+        h1 {
+            font-size: 40px;
+            color: #ef4a75;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 15px 30px;
+            font-size: 20px;
+            background-color: #ef4a75;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #fd5564;
+        }
+
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }        
+
+        #numbers, #solution {
+            margin-top: 20px;
+            margin-bottom: 20px;
+            padding: 15px;
+            font-size: 30px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            height: 1em;
+            line-height: 1em;
+        }
+
+        #timer {
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="main">
+        <h1>O宝闯关24点</h1>
+        <div id="timer"></div>
+        <div id="numbers"></div>
+        <div id="solution"></div>
+        <button onclick="refresh()">下一题</button>
+        <button id="solveButton" onclick="solve()">答案</button>
+    </div>
+
+    <script type="text/javascript" src="puzzle24.js"></script>
+    <script>
+        // const allPuzzlesWithSolutions = findPuzzles();
+        const allPuzzlesWithSolutions = cachedAllPuzzlesWithSolutions;
+        let allPuzzles = Object.keys(allPuzzlesWithSolutions);
+        let currentPuzzle = '';
+
+
+        let timerInterval;
+        let seconds = 0;
+
+        function startTimer() {
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        function updateTimer() {
+            seconds = seconds + 1;
+            document.getElementById('timer').textContent = formatTime(seconds);
+        }
+
+        function formatTime(seconds) {
+            let minutes = Math.floor(seconds / 60);
+            let remainingSeconds = seconds % 60;
+            return `${padZero(minutes)}:${padZero(remainingSeconds)}`;
+        }
+
+        function padZero(number) {
+            return number < 10 ? '0' + number : number;
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            seconds = 0;
+            document.getElementById('timer').textContent = formatTime(seconds);
+            startTimer();
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+        }
+
+        function refresh() {
+            currentPuzzle = allPuzzles[Math.floor(Math.random() * allPuzzles.length)];
+            document.getElementById('numbers').innerText = currentPuzzle;
+            document.getElementById('solution').innerText = '';
+            document.getElementById('solveButton').disabled = false;
+            resetTimer();
+        }
+
+        function solve() {
+            const solution = allPuzzlesWithSolutions[currentPuzzle][0];
+            document.getElementById('solution').innerText = solution;
+            document.getElementById('solveButton').disabled = true;
+            stopTimer();
+        }
+
+        refresh();
+    </script>
+</body>
+</html>
